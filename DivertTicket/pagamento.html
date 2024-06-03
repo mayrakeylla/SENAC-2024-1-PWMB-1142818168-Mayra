@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="stylePagar.css">
+    <title>Pagar</title>
+</head>
+
+<body>
+    <header>
+        <!--logo-->
+        <a href="index.html" class="logo"> Diver<br />Ticket<br /> </a>
+        <!--botoes header-->
+    </header>
+    <main>
+
+        <form>
+
+            <h2>Informaçoes para recebimento de ingresso</h2>
+
+            <label for="nome">nome</label>
+            <input type="text" placeholder="Insira o sue nome" name="nome" id="nome">
+
+            <label for="email">E-mail</label>
+            <input type="text" placeholder="Insira o email" name="email" id="email" required>
+
+            <label for="cpf">CPF</label>
+            <input type="text" placeholder="000.000.000-00" name="cpf" id="cpf" minlength="14" maxlength="14"
+                required><br><br>
+
+
+            <h2>Informação de pagamento</h2>
+            <!--NOME DO CARTÃO-->
+            <label for="nomeCartao">Nome impresso no cartão</label>
+            <input type="text" placeholder="Insira o nome do cartão" name="nomeCartao" maxlength="50" id="nomeCartao"
+                required>
+
+            <!--NUMERO DO CARTÃO-->
+            <label for="numeroCartao">Número do Cartão</label>
+            <input type="text" placeholder="0000 0000 0000 0000" name="numeroCartao" maxlength="19" id="numeroCartao"
+                required>
+
+            <!--VALIDADE DO CARTÃO-->
+            <label for="dataValidade">Data de validade</label>
+            <input type="text" placeholder="MM/AA" name="dataValidade" maxlength="5" id="dataValidade" required>
+
+            <!--CODIGO DE SEGURANÇA DO CARTÃO-->
+            <label for="codigoSegurancaCartao">Codigo de Seguranca do Cartao</label>
+            <input type="text" placeholder="000" name="codigoSegurancaCartao" maxlength="3" id="codigoSegurancaCartao"
+                required><br><br>
+
+
+            <h2>resumo da compra</h2>
+
+            <label for="nome">quantidade de ingresso</label>
+            <input type="number" id="qtdIngresso" name="qtdIngresso" readonly>
+
+            <label for="nome"> Valor total </label>
+            <input type="text" id="valorTotal" name="valorTotal" readonly>
+
+            <label for="nome">Tipo</label>
+            <input type="text" id="tipoIngresso" name="tipo" readonly>
+
+            <label for="nomeDoEvento">Nome Do Evento</label>
+            <input type="text" id="nomeDoEvento" name="nomeDoEvento" readonly>
+
+            <!--BOTÃO CONTINUA-->
+            <button type="button" onclick="salvarIngresso()">Comprar</button>
+
+        </form>
+
+        <script>
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const dados = urlParams.get('dados');
+
+
+            let palavras = dados.split(";");
+            let nomeEvento = palavras[1];
+            let tipo = palavras[0];
+            let totalIngresso = palavras[2];
+            let valor = palavras[3];
+            let usuarios = [];
+            let ingressos = [];
+
+            // Aqui você pode pegar os dados do cartão
+            const qtdIngresso = document.getElementById('qtdIngresso');
+            const valorTotal = document.getElementById('valorTotal');
+            const tipoIngresso = document.getElementById('tipoIngresso');
+            const nomeDoEvento = document.getElementById('nomeDoEvento');
+            const email = document.getElementById('email');
+            const cpf = document.getElementById('cpf');
+            const nome = document.getElementById('nome');
+
+
+            qtdIngresso.value = totalIngresso;
+            valorTotal.value = valor;
+            tipoIngresso.value = tipo;
+            nomeDoEvento.value = nomeEvento;
+
+
+            // valida se todos os requisitos de pagemnto estão correto para salvar no banco de dados
+            function salvarIngresso() {
+                const numeroCartao = document.getElementById('numeroCartao').value;
+                const dataValidade = document.getElementById('dataValidade').value;
+                const cpf = document.getElementById('cpf').value;
+                const nomeCartao = document.getElementById('nomeCartao').value;
+                const nome = document.getElementById('nome').value;
+
+                console.log(validarEmail());
+                // Verificando se todos os campos foram preenchidos corretamente
+                if (numeroCartao.length === 19 && dataValidade.length === 5 && cpf.length === 14 && email.value.length > 6 && nomeCartao.length > 2 && nome.length > 3) {
+                    // Adicionando a mensagem de sucesso
+                    if (validarEmail()) {
+                        cadastrarIngresso();
+                        alert("Ingresso comprado com sucesso");
+                        window.location.href = "index.html?email="+email.value;
+
+                    } else {
+                        alert("Email inválido");
+                    }
+
+                } else {
+                    // Adicionando a mensagem de erro
+                    alert('Por favor, preencha todos os campos corretamente.');
+                }
+
+            }
+
+
+            function validarEmail() {
+                let emailValido = false;
+                // Carrega os usuários do localStorage
+                const usuariosStorage = localStorage.getItem('usuarios');
+                if (usuariosStorage) {
+                    usuarios = JSON.parse(usuariosStorage);
+                }
+
+                for (let index = 0; index < usuarios.length; index++) {
+                    if (usuarios[index].email === email.value) {
+                        emailValido = true;
+                        break;
+                    }
+                }
+                return emailValido;
+            }
+
+
+
+
+            /*=========================== cadastro =================================== */
+            function cadastrarIngresso() {
+
+                let ingresso = {
+                    nome: nome.value,
+                    email: email.value,
+                    cpf: cpf.value,
+                    tipo: tipoIngresso.value,
+                    qtdIngresso: qtdIngresso.value,
+                    nomeDoEvento: nomeDoEvento.value,
+                    valorTotal: valorTotal.value
+                };
+
+                // Recuperar o array de usuários do Local Storage
+                const ingressoStorage = localStorage.getItem('ingressos');
+                ingressos = ingressoStorage ? JSON.parse(ingressoStorage) : [];
+
+                // Adicionar o novo usuário ao array
+                ingressos.push(ingresso);
+
+                // Salvar o array modificado no Local Storage
+                localStorage.setItem('ingressos', JSON.stringify(ingressos));
+
+            }
+
+
+
+        </script>
+
+        <!--JAVASCRIPT DO CPF-->
+        <script>
+            // Função para adicionar os pontos e hífen no CPF
+            function formatarCPF(cpf) {
+                // Remove caracteres que não são dígitos
+                cpf = cpf.replace(/\D/g, '');
+                // Adiciona ponto após o terceiro e sexto dígitos do CPF
+                cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
+                cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
+                // Adiciona hífen após o nono dígito do CPF
+                cpf = cpf.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                return cpf;
+            }
+
+            // Evento de input para formatar o CPF durante a digitação
+            function adicionarEventoInput() {
+                const inputCPF = document.getElementById('cpf');
+                inputCPF.addEventListener('input', function (e) {
+                    e.target.value = formatarCPF(e.target.value);
+                });
+            }
+
+            // Inicializa o evento de input após o carregamento da página
+            window.addEventListener('DOMContentLoaded', adicionarEventoInput);
+        </script>
+
+        <!--JAVASCRIPT DO NUMERO DO CARTÃO-->
+        <script>
+            // Função para adicionar espaços a cada quatro dígitos
+            function formatarNumeroCartao(numero) {
+                // Remove caracteres que não são dígitos
+                numero = numero.replace(/\D/g, '');
+                // Adiciona espaço após cada quatro dígitos
+                numero = numero.replace(/(\d{4})(?=\d)/g, '$1 ');
+                return numero;
+            }
+
+            // Evento de input para formatar o número do cartão durante a digitação
+            function adicionarEventoInput() {
+                const inputNumeroCartao = document.getElementById('numeroCartao');
+                inputNumeroCartao.addEventListener('input', function (e) {
+                    e.target.value = formatarNumeroCartao(e.target.value);
+                });
+            }
+
+            // Inicializa o evento de input após o carregamento da página
+            window.addEventListener('DOMContentLoaded', adicionarEventoInput);
+        </script>
+
+
+        <!--JAVASCRIPT PARA DATA-->
+        <script>
+            // Função para adicionar a barra entre mês e ano
+            function formatarData(data) {
+                // Remove caracteres que não são dígitos
+                data = data.replace(/\D/g, '');
+                // Adiciona barra após o segundo dígito (mês)
+                data = data.replace(/(\d{2})(\d)/, '$1/$2');
+                return data;
+            }
+
+            // Evento de input para formatar a data durante a digitação
+            function adicionarEventoInput() {
+                const inputData = document.getElementById('dataValidade');
+                inputData.addEventListener('input', function (e) {
+                    e.target.value = formatarData(e.target.value);
+                });
+            }
+
+            // Inicializa o evento de input após o carregamento da página
+            window.addEventListener('DOMContentLoaded', adicionarEventoInput);
+        </script>
+    </main>
+    <footer>
+
+        <!--links-->
+        <a class="link">termo de uso</a>
+        <a class="link">Política de privacidade</a>
+        <a class="link">Política de reembolso</a>
+        <!--logo em rodape-->
+        <a href="index.html" class="logo-rodape"> Diver<br />Ticket<br /></a>
+        <a class="link">Perguntas Frequente</a>
+        <a class="link">Informação de contatos</a>
+        <a class="link">Sobre Nos</a>
+
+    </footer>
+</body>
+
+</html>

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styleEventoExpecifico.css">
+
+    <title>BH STOCK FESTIVAL</title>
+</head>
+
+<body>
+    <!-- ==========================================cabeçalho==========================================-->
+    <header>
+        <!--logo-->
+        <a href="index.html" class="logo"> Diver<br />Ticket<br /> </a>
+        <!--botoes header-->
+    </header>
+
+    <!---------------------------------------------------------------------------->
+    <main>
+
+        <!--TITULO DA IMAGEM-->
+        <div class="tituloImag">
+            <img id="evento-imagem" src="imgs/Stock Festival.png" alt="BH STOCK FESTIVAL">
+            <h2 id="evento-titulo"></h2>
+
+            <!--TITULO DA DATA-->
+            <div class="tituloData">
+                <h3>
+                    dia Inicio: <p id="evento-data-inicio"></p>, hora Inicio> <p id="evento-hora-inicio"></p>, dia
+                    termina: <p id="evento-data-fim"></p>, hora termina> <p id="evento-hora-fim"></p>
+                </h3>
+            </div>
+
+            <!--TITULO DA LOCAL-->
+            <div class="tituloEnder">
+                <h3>
+                    local: <p id="evento-local"></p>, endereco: <p id="evento-endereco"></p>, cep:<p id="evento-cep">
+                    </p>
+                </h3>
+            </div>
+
+            <!--DESCRIÇÃO DO EVENTO-->
+            <div class="descriEvento">
+                <h2>Descrição do evento</h2>
+                <p id="evento-descricao"></p>
+            </div>
+        </div>
+
+        <div class="conteudo">
+            <div id="inteira">
+                <h2>INGRESSOS</h2>
+                <!--INFORMAÇÃO DO INGRESSO INTEIRA-->
+                <label for="inteira">INTEIRA</label>
+                <label for="preco" id="labelInteira"></label>
+                <!--BOTÃO DE CONTAGEM-->
+                <div class="counter-container">
+                    <button class="counter-btn" id="decrease">-</button>
+                    <span id="counter-value-inteira">0</span>
+                    <button class="counter-btn" id="increase" onclick="verificar('1')">+</button>
+                </div>
+            </div>
+            <!-------------------------------------------------------------------------------->
+
+            <div id="meia">
+                <!--INFORMAÇÃO DO INGRESSO MEIA-->
+                <label for="meia">MEIA</label>
+                <label for="preco" id="labelMeia"></label>
+                <!--BOTÃO DE CONTAGEM-->
+                <div class="counter-container">
+                    <button class="counter-btn" id="decrease">-</button>
+                    <span id="counter-value-meia">0</span>
+                    <button class="counter-btn" id="increase" onclick="verificar('2')">+</button>
+                </div>
+            </div>
+            <!-------------------------------------------------------------------------------->
+
+            <div id="vip">
+                <!--INFORMAÇÃO DO INGRESSO VIP-->
+                <label for="vip"> VIP</label>
+                <label for="preco" id="labelVip"></label>
+                <!--BOTÃO DE CONTAGEM-->
+                <div class="counter-container">
+                    <button class="counter-btn" id="decrease">-</button>
+                    <span id="counter-value-vip">0</span>
+                    <button class="counter-btn" id="increase" onclick="verificar('3')">+</button>
+                </div>
+            </div>
+
+            <!--SOMA TOTAL DE INGRESSO ESCOLIDO-->
+            <label>Preço total dos ingressos: <span id="total-price">R$ 0,00</span></label>
+
+            <!--TOTAL DE INGRESSO ESCOLIDO-->
+            <label>Total de ingressos: <span id="total-tickets">0</span></label>
+
+            <!--------------------------------------------------------------------------------------------->
+            <!--BOTÃO PAGAR-->
+            <button class="button button2" onclick="verificar('4')">Pagar</button>
+            <!-------------------------------------------------------------------------------->
+        </div>
+
+
+
+
+        <!--------------------------------------------------------------------------------------------->
+        <!--JS PARA ATULIAZR O TOTAL DE INGRESSO ESCOLIDO  E PREÇO TOTAL-->
+        <script>
+
+            // Elementos para exibir o total de ingressos e o preço total
+            const labelVip = document.getElementById('labelVip');
+            const labelInteira = document.getElementById('labelInteira');
+            const labelMeia = document.getElementById('labelMeia');
+
+            const divMeia = document.getElementById('meia');
+            const divVip = document.getElementById('vip');
+            const divInteira = document.getElementById('inteira');
+            let ingresso = [];
+            let precoVip = 0;
+            let precoMeia = 0;
+            let precoInteira = 0;
+            let valorTotal = 0.00;
+            let totalIngresso = 0;
+            let tipo;
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const nomeEvento = urlParams.get('nomeDoevento');
+
+            function exibirInformacao() {
+                // Obtém o array de objetos do armazenamento local
+                const eventos = JSON.parse(localStorage.getItem('eventos'));
+
+                //Define a variável nomeDoEvento
+                const nomeDoEvento = nomeEvento ? nomeEvento.trim() : '';
+
+
+                // Filtre o array para obter apenas o objeto com o nome correspondente
+                const evento = eventos.filter(event => event.nomeDoEvento.trim() === nomeDoEvento)[0];
+
+                // Agora você pode usar o objeto evento em seu código
+                console.log(evento);
+
+                document.getElementById('evento-titulo').textContent = evento.nomeDoEvento;
+                document.getElementById('evento-descricao').textContent = evento.descricao;
+                document.getElementById('evento-data-inicio').textContent = evento.dataInicio;
+                document.getElementById('evento-data-fim').textContent = evento.dataFim;
+                document.getElementById('evento-local').textContent = evento.local;
+                document.getElementById('evento-endereco').textContent = evento.endereco;
+                document.getElementById('evento-cep').textContent = evento.cep;
+                document.getElementById('evento-hora-inicio').textContent = evento.horaInicio;
+                document.getElementById('evento-hora-fim').textContent = evento.horaFim;
+                document.getElementById('evento-imagem').src = `data:image/jpeg;base64,${evento.imagem}`;
+                ingresso = evento.ingressos;
+
+
+                for (let i = 0; i < ingresso.length; i++) {
+
+                    if (ingresso[i].tipo === "Vip") {
+                        precoVip = ingresso[i].preco;
+                    }
+
+                    if (ingresso[i].tipo === "Inteira") {
+                        precoInteira = ingresso[i].preco;
+                    }
+
+                    if (ingresso[i].tipo === "Meia") {
+                        precoMeia = ingresso[i].preco;
+                    }
+
+                }
+
+                //vip mostar as opções de ingresso conforme o usuario criou o evento
+
+                if (precoVip === 0) {
+
+                    divVip.style.display = "none";
+
+                }
+
+
+                //meia mostar as opções de ingresso conforme o usuario criou o evento   
+
+                if (precoMeia === 0) {
+
+                    divMeia.style.display = "none";
+
+                }
+
+                //inteira mostar as opções de ingresso conforme o usuario criou o evento
+
+                if (precoInteira === 0) {
+
+                    divInteira.style.display = "none";
+
+                }
+
+                labelVip.textContent = 'R$ ' + precoVip;
+                labelInteira.textContent = 'R$ ' + precoInteira;
+                labelMeia.textContent = 'R$ ' + precoMeia;
+
+            }
+
+
+
+            // Elementos para exibir o total de ingressos e o preço total
+            const totalTicketsElement = document.getElementById('total-tickets');
+            const totalPriceElement = document.getElementById('total-price');
+
+            const ticketOptions = document.querySelectorAll('.counter-container');
+            const maxTickets = 3; // Limite de ingressos
+
+            ticketOptions.forEach((option, index) => {
+                const increaseButton = option.querySelector('.counter-btn[id="increase"]');
+                const decreaseButton = option.querySelector('.counter-btn[id="decrease"]');
+                let counterValue;
+
+                // Definindo o contador de acordo com o tipo de ingresso
+                if (index === 0) {
+                    counterValue = option.querySelector('#counter-value-inteira');
+                } else if (index === 1) {
+                    counterValue = option.querySelector('#counter-value-meia');
+                } else {
+                    counterValue = option.querySelector('#counter-value-vip');
+                }
+
+                increaseButton.addEventListener('click', function () {
+                    let currentValue = parseInt(counterValue.textContent);
+                    if (currentValue < maxTickets) {
+                        counterValue.textContent = currentValue + 1;
+                    }
+                    // Ocultar as outras opções de ingresso
+                    ticketOptions.forEach((otherOption, otherIndex) => {
+                        if (otherIndex !== index) {
+                            otherOption.style.display = 'none';
+                        }
+                    });
+                    updateTotalTickets();
+                    updateTotalPrice();
+                });
+
+                decreaseButton.addEventListener('click', function () {
+                    let currentValue = parseInt(counterValue.textContent);
+                    if (currentValue > 0) {
+                        counterValue.textContent = currentValue - 1;
+                    }
+                    // Mostrar as outras opções de ingresso se a contagem for 0
+                    if (currentValue - 1 === 0) {
+                        ticketOptions.forEach((otherOption) => {
+                            otherOption.style.display = 'block';
+                        });
+                    }
+                    updateTotalTickets();
+                    updateTotalPrice();
+                });
+            });
+
+            function updateTotalTickets() {
+                let totalTickets = 0;
+                // Calcular o total de ingressos
+                ticketOptions.forEach((option, index) => {
+                    let counterValue;
+                    if (index === 0) {
+                        counterValue = option.querySelector('#counter-value-inteira');
+                    } else if (index === 1) {
+                        counterValue = option.querySelector('#counter-value-meia');
+                    } else {
+                        counterValue = option.querySelector('#counter-value-vip');
+                    }
+                    totalTickets += parseInt(counterValue.textContent);
+                });
+                // Atualizar o total de ingressos
+                totalTicketsElement.textContent = totalTickets;
+                totalIngresso = totalTickets;
+            }
+
+            function updateTotalPrice() {
+                // Preços dos ingressos
+                let ticketPrices = {
+                    inteira: precoInteira,
+                    meia: precoMeia,
+                    vip: precoVip
+                };
+
+                let totalPrice = 0.00;
+                // Calcular o preço total
+                ticketOptions.forEach((option, index) => {
+                    let counterValue;
+                    if (index === 0) {
+                        counterValue = option.querySelector('#counter-value-inteira');
+                        totalPrice += parseInt(counterValue.textContent) * ticketPrices.inteira;
+                    } else if (index === 1) {
+                        counterValue = option.querySelector('#counter-value-meia');
+                        totalPrice += parseInt(counterValue.textContent) * ticketPrices.meia;
+                    } else {
+                        counterValue = option.querySelector('#counter-value-vip');
+                        totalPrice += parseInt(counterValue.textContent) * ticketPrices.vip;
+                    }
+                });
+                // Atualizar o preço total dos ingressos
+                totalPriceElement.textContent = 'R$ ' + totalPrice.toFixed(2);
+                valorTotal = totalPrice;
+            }
+
+            exibirInformacao();
+
+
+
+
+
+
+
+            //função para validar se foi selecionado algum ingresso e validar se tem a qtd de ingresso desejada pelo usuario
+            // se tiver td certo o ingresso é salvo no banco de dados
+            function verificar(idCiclo) {
+
+                if (idCiclo === '1') {
+                    tipo = 'inteira';
+                } else if (idCiclo === '2') {
+                    tipo = 'meia';
+                } else if (idCiclo === '3') {
+                    tipo = 'vip';
+                }
+
+                if (idCiclo === '4') {
+
+                    if (totalIngresso > 0) {
+
+
+                        window.location.href = "pagamento.html?dados="+ tipo + ";" + nomeEvento + ";" + totalIngresso + ";" + valorTotal;
+
+                    } else {
+                        alert("Não selecionou ingresso");
+                    }
+
+                }
+            }
+
+
+        </script>
+        <!--------------------------------------------------------------------------------------------->
+
+    </main>
+    <!-- =============================================================================================================== -->
+    <!--footer-->
+    <footer>
+        <!--links-->
+        <a class="link">termo de uso</a>
+        <a class="link">Política de privacidade</a>
+        <a class="link">Política de reembolso</a>
+        <!--logo em rodape-->
+        <a href="index.html" class="logo-rodape"> Diver<br />Ticket<br /></a>
+        <a class="link">Perguntas Frequente</a>
+        <a class="link">Informação de contatos</a>
+        <a class="link">Sobre Nos</a>
+    </footer>
+    <!-- =============================================================================================================== -->
+
+
+</body>
+
+</html>

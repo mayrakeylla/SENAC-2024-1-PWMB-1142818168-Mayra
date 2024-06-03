@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styleMeusIngressos.css">
+
+    <title>Meus Ingressos</title>
+</head>
+
+<body>
+
+
+    <!-- ==========================================cabeçalho========================================== -->
+    <header>
+        <!--logo-->
+        <a href="index.html" class="logo"> Diver<br />Ticket<br /></a>
+        <!--botoes header-->
+    </header>
+    <!-- ========================================================================================================================= -->
+
+    <!-- =====================================================main=========================================================== -->
+    <main>
+
+        <!--card ingresso-->
+        <div class="div-ticket">
+        </div>
+
+
+    </main>
+
+    <script>
+
+
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const nomeEmail = urlParams.get('email');
+
+        function exibirIngressos() {
+
+            // Obtém o array de objetos do armazenamento local
+            const ingressos = JSON.parse(localStorage.getItem('ingressos'));
+
+            // Filtre o array para obter apenas o objeto com o nome correspondente
+            const ingresso = ingressos.filter(ingress => ingress.email.trim() === nomeEmail);
+
+            console.log(ingresso);
+
+            // Seleciona o elemento onde os eventos serão exibidos
+            const ingressoContainer = document.querySelector('.div-ticket');
+
+            // Limpa o conteúdo anterior do container
+            ingressoContainer.innerHTML = '';
+
+            if (ingresso) {
+
+                // Itera sobre os eventos e cria um card para cada um
+                ingresso.forEach(ingress => {
+
+                    for (let i = 0; i < parseInt(ingress.qtdIngresso); i++) {
+
+                        const card = `
+                        <div class="ticket">
+                <h2>
+                    ${ingress.nomeDoEvento}
+            </h2>
+            
+            <p>Tipo Ingresso:${ingress.tipo}
+            </p>
+            <div class="barcode"></div>
+            <p>Código do Ingresso: 7655656467678787
+            </p>
+            </div>
+              `;
+
+                        // Adiciona o card ao container
+                        ingressoContainer.innerHTML += card;
+                    }
+
+                });
+
+            }else{
+                alert("Nenhum ingresso encontrado");
+                window.location.href = "index.html?email=" + nomeEmail;
+            }
+        }
+
+        exibirIngressos();
+
+    </script>
+    <!-- =============================================================================================================== -->
+    <!--footer-->
+    <footer>
+        <!--links-->
+        <a class="link">termo de uso</a>
+        <a class="link">Política de privacidade</a>
+        <a class="link">Política de reembolso</a>
+        <!--logo em rodape-->
+        <a href="index.html" class="logo-rodape"> Diver<br />Ticket<br /></a>
+        <a class="link">Perguntas Frequente</a>
+        <a class="link">Informação de contatos</a>
+        <a class="link">Sobre Nos</a>
+    </footer>
+    <!-- =============================================================================================================== -->
+</body>
+
+</html>

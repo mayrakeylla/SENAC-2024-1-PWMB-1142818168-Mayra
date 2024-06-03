@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styleEventos.css">
+    <link rel="stylesheet" href="styleCards.css">
+    <title>eventos</title>
+</head>
+
+<body>
+    <!-- ==========================================cabeçalho========================================== -->
+    <header>
+        <!--logo-->
+        <a href="index.html" class="logo"> Diver<br />Ticket<br /></a>
+        <!--botoes header-->
+    </header>
+    <!-- ========================================================================================================================= -->
+    <!-- ==========================================menu============================================= -->
+    <section class="menu">
+        <div>
+            <input type="text" placeholder="Pesquisar eventos,show,teatro..." title="Type in a name">
+        </div>
+
+        <nav class="sub-menu">
+            <a href="eventos.html" class="link">Eventos</a>
+            <a href="cadastroUsuario.html" class="link">Cadastre-se</a>
+            <a class="link">Contato</a>
+            <a class="link">Ajuda</a>
+        </nav>
+    </section>
+    <!-- =====================================================main=========================================================== -->
+    <main>
+
+        <h2> Eventos</h2>
+
+        <div class="centralizar">
+
+            <div class="eventos-container"></div>
+
+        </div>
+    </main>
+
+    <!-- =============================================================================================================== -->
+    <!--footer-->
+    <footer>
+        <!--links-->
+        <a class="link">termo de uso</a>
+        <a class="link">Política de privacidade</a>
+        <a class="link">Política de reembolso</a>
+        <!--logo em rodape-->
+        <a href="index.html" class="logo-rodape"> Diver<br />Ticket<br /></a>
+        <a class="link">Perguntas Frequente</a>
+        <a class="link">Informação de contatos</a>
+        <a class="link">Sobre Nos</a>
+    </footer>
+    <!-- =============================================================================================================== -->
+
+    <script>
+        function exibirEventos() {
+            // Obtém os eventos do Local Storage
+            const eventosStorage = localStorage.getItem('eventos');
+            const eventos = JSON.parse(eventosStorage) || [];
+
+            // Seleciona o elemento onde os eventos serão exibidos
+            const eventosContainer = document.querySelector('.eventos-container');
+
+            // Limpa o conteúdo anterior do container
+            eventosContainer.innerHTML = '';
+
+            // Itera sobre os eventos e cria um card para cada um
+            eventos.forEach(evento => {
+                const card = `
+    
+        <div class="img-cards">
+            <a  href="eventoExpecifico.html?nomeDoevento= ${evento.nomeDoEvento}">
+
+          <img src="data:image/jpeg;base64,${evento.imagem}" alt="${evento.nomeDoEvento}">
+            </a>       
+        <div class="desc">
+          <h3>${evento.dataInicio}</h3>
+          <h5>${evento.nomeDoEvento}</h5>
+        </div>
+        </div>
+    `;
+
+                // Adiciona o card ao container
+                eventosContainer.innerHTML += card;
+            });
+        }
+
+        // Chama a função para exibir os eventos
+        exibirEventos();
+    </script>
+</body>
+
+</html>

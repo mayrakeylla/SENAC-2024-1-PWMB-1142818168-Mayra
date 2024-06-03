@@ -1,0 +1,165 @@
+<!--FAZER UMA LISTAGEM DE QUANTIDADE DE INGRESSO VENDIDOS, NOME DO CLIENTE E QUANTIDADE COMPRADA, VALOR TOTAL DE CADA CLIENTE , QUANTIDADE E TOTAL
+QUANTIDADE VENDIDA DE CADA TIPO DE INGRESSO, 
+  -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styleMeusEventos.css">
+    <title>Meus Eventos</title>
+</head>
+
+<body>
+    <!-- ==========================================cabeçalho==========================================-->
+    <header>
+        <!--logo-->
+        <a href="index.html" class="logo"> Diver<br />Ticket<br /> </a>
+        <!--botoes header-->
+    </header>
+    <!-- ==========================================cabeçalho==========================================-->
+    <main>
+
+        <table id="tabelaIngressos">
+            <tr>
+                <th>Nome do Evento</th>
+                <th>Nome do Cliente</th>
+                <th>Email</th>
+                <th>Quantidade de Ingressos</th>
+                <th>Valor Total da Compra</th>
+                <th>Tipo de Ingresso</th>
+            </tr>
+        </table>
+    </main>
+    <script>
+
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const nomeEmail = urlParams.get('email');
+
+
+        function exibirRelatorio() {
+
+            // Obtém o array de objetos do armazenamento local
+            const eventos = JSON.parse(localStorage.getItem('eventos'));
+
+            // Filtre o array para obter apenas o objeto com o nome correspondente
+            const evento = eventos.filter(event => event.email.trim() === nomeEmail)[0];
+
+
+            if (evento) {
+                console.log(evento);
+
+                let qtdCliente = 0;
+                let totalDeIngresso = 0;
+                let totalDeValor = 0;
+                let qtdVip = 0, qtdMeia = 0, qtdInteira = 0;
+
+                // Obtém o array de objetos do armazenamento local
+                const ingressos = JSON.parse(localStorage.getItem('ingressos'));
+                const nomeEvento = " "+evento.nomeDoEvento;
+
+                // Filtre o array para obter apenas o objeto com o nome correspondente
+                const ingresso = ingressos.filter(ingress => ingress.nomeDoEvento.trim() === nomeEvento );
+                console.log(ingresso);
+                console.log(nomeEvento);
+                const tabelaIngressos = document.getElementById('tabelaIngressos');
+
+                ingresso.forEach((dados) => {
+                    const novaLinha = tabelaIngressos.insertRow();
+
+                    const celulaNomeDoEvento = novaLinha.insertCell();
+                    celulaNomeDoEvento.innerHTML = dados.nomeDoEvento;
+
+                    const celulaNomeCliente = novaLinha.insertCell();
+                    celulaNomeCliente.innerHTML = dados.nome;
+
+                    const celulaEmail = novaLinha.insertCell();
+                    celulaEmail.innerHTML = dados.email;
+
+                    const celulaQuantidadeIngressos = novaLinha.insertCell();
+                    celulaQuantidadeIngressos.innerHTML = dados.qtdIngresso;
+
+                    const celulaValorTotalCompra = novaLinha.insertCell();
+                    celulaValorTotalCompra.innerHTML = dados.valorTotal;
+
+                    const celulaTipoIngresso = novaLinha.insertCell();
+                    celulaTipoIngresso.innerHTML = dados.tipo;
+
+                    qtdCliente++;
+                    totalDeIngresso += parseInt(dados.qtdIngresso); // converte para inteiro
+                    totalDeValor += parseFloat(dados.valorTotal); // converte para float
+                    
+                    if (dados.tipo.toLowerCase() === "vip") {
+                        qtdVip += parseInt(dados.qtdIngresso);
+                    }
+
+                    if (dados.tipo.toLowerCase() === "meia") {
+                        qtdMeia += parseInt(dados.qtdIngresso);
+                    }
+
+                    if (dados.tipo.toLowerCase() === "inteira") {
+                        qtdInteira += parseInt(dados.qtdIngresso);
+                    }
+                });
+
+
+
+
+                const novaLinha = tabelaIngressos.insertRow();
+
+                const celulaTotal = novaLinha.insertCell();
+                celulaTotal.innerHTML = "Total";
+
+                const celulaQtdCliente = novaLinha.insertCell();
+                celulaQtdCliente.innerHTML = qtdCliente;
+
+                const celulaEmail = novaLinha.insertCell();
+                celulaEmail.innerHTML = " ";
+
+
+                const celulaTotalIngresso = novaLinha.insertCell();
+                celulaTotalIngresso.innerHTML = totalDeIngresso;
+
+                const celulaTotalDaCompra = novaLinha.insertCell();
+                celulaTotalDaCompra.innerHTML = totalDeValor;
+
+                const celulaTipos = novaLinha.insertCell();
+                celulaTipos.innerHTML = "vip: " + qtdVip + " inteira: " + qtdInteira + " meia: " + qtdMeia;
+
+
+
+
+
+            } else {
+                alert("Nenhum evento encontrado");
+                window.location.href = "index.html?email=" + nomeEmail;
+            }
+
+
+
+        }
+
+        exibirRelatorio();
+
+    </script>
+    <!-- ==================================================footer============================================================= -->
+    <!--footer-->
+    <footer>
+        <!--links-->
+        <a class="link">termo de uso</a>
+        <a class="link">Política de privacidade</a>
+        <a class="link">Política de reembolso</a>
+        <!--logo em rodape-->
+        <a href="index.html" class="logo-rodape"> Diver<br />Ticket<br /></a>
+        <a class="link">Perguntas Frequente</a>
+        <a class="link">Informação de contatos</a>
+        <a class="link">Sobre Nos</a>
+    </footer>
+    <!-- =====================================================footer============================================================== -->
+
+</body>
+
+</html>
